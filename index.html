@@ -266,15 +266,20 @@ function norm(s) {
 function getCourier(address, date, shift) {
   const key = date+'_'+shift.toLowerCase();
   const n = norm(address);
-  for (const kw of (getRustam()[key]||[])) {
-    if (n.includes(kw.toLowerCase())) return {courier:'Рустам',cost:1000};
+  const hW = new Set(n.split(' ').filter(w=>w.length>=2));
+
+  // Проверяем Рустам
+  for (const rustamAddr of (getRustam()[key]||[])) {
+    const rW = new Set(norm(rustamAddr).split(' ').filter(w=>w.length>=2));
+    if ([...rW].filter(w=>hW.has(w)).length>=2) return {courier:'Рустам',cost:1000};
   }
+
+  // Проверяем Яндекс
   for (const order of getYandex()) {
     const oDate = parseDate(order.date)||order.date;
     if (oDate!==date) continue;
     for (const ya of (order.destinations||[])) {
       const yW=new Set(norm(ya).split(' ').filter(w=>w.length>=2));
-      const hW=new Set(n.split(' ').filter(w=>w.length>=2));
       if ([...yW].filter(w=>hW.has(w)).length>=2) return {courier:'Яндекс',cost:order.cost_per_address};
     }
   }
