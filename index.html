@@ -221,12 +221,14 @@ function parseCSV(text) {
       else cur+=line[i];
     }
     cols.push(cur);
-    if (cols.length<10 || !/^\d+$/.test((cols[0]||'').trim())) continue;
-    const date = parseDate(cols[3]);
+    if (cols.length<6 || !/^\d+$/.test((cols[0]||'').trim())) continue;
+    const date = parseDate(cols[1]);
     if (!date) continue;
-    const t = (cols[9]||'').trim();
-    const shift = t.includes('6:') ? 'УТРО' : ((t.includes('20:')||t.includes('19:')) ? 'ВЕЧЕР' : 'УТРО');
-    entries.push({name:(cols[1]||'').trim(),phone:(cols[2]||'').trim(),date,shift,address:(cols[5]||'').trim()});
+    const t = (cols[10]||'').trim();
+    const shift = t.includes('6:') || t.includes('7:') || t.includes('8:') ? 'УТРО' : 'ВЕЧЕР';
+    const addr = (cols[5]||'').trim();
+    if (!addr) continue;
+    entries.push({name:(cols[3]||'').trim(),phone:(cols[4]||'').trim(),date,shift,address:addr});
   }
   return entries;
 }
