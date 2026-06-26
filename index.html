@@ -260,8 +260,10 @@ function parseCSV(text) {
 // ════════════════════════════════════════════
 function norm(s) {
   return s.toLowerCase()
-    .replace(/улица|проспект|пр-т|ул\.|микрорайон|мкр|дом|кв\.|алматы|казахстан/g,' ')
-    .replace(/[^\w\d\s]/g,' ').replace(/\s+/g,' ').trim();
+    .replace(/,/g, ' ')
+    .replace(/[^\p{L}\d\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 function getCourier(address, date, shift) {
   const key = date+'_'+shift.toLowerCase();
